@@ -28,10 +28,10 @@ export default function Colaboradores() {
     try {
       if (modal?.id) {
         await editarColaborador(modal.id, form)
-        toast('Colaborador atualizado!')
+        toast('Colaborador updated!')
       } else {
         await criarColaborador(form)
-        toast('Colaborador cadastrado!')
+        toast('Colaborador created!')
       }
       setModal(null); load()
     } catch (e) { toast(e.message || 'Erro ao salvar', 'error') }
@@ -42,7 +42,7 @@ export default function Colaboradores() {
     if (!confirm(`Deseja mesmo remover ${c.nome}?`)) return
     try {
       await deletarColaborador(c.id)
-      toast('Colaborador removido')
+      toast('Colaborador removed')
       load()
     } catch (e) { toast(e.message, 'error') }
   }
@@ -73,47 +73,64 @@ export default function Colaboradores() {
               const inicial = c.nome ? c.nome.charAt(0).toUpperCase() : '?'
 
               return (
-                <div key={c.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', padding: '1.25rem' }}>
+                <div key={c.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
                   
-                  {/* FORÇADO: Container estrutural flex para alinhar a foto ao lado do texto */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px', width: '100%' }}>
-                    
-                    {c.foto_url ? (
-                      <img 
-                        src={c.foto_url} 
-                        alt={c.nome} 
-                        style={{ 
-                          width: '46px', 
-                          height: '46px', 
-                          borderRadius: '50%', 
-                          objectFit: 'cover', 
-                          border: '2px solid #C80064',
-                          display: 'block',
-                          flexShrink: 0
-                        }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: '46px', height: '46px', borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #C80064, #8C1478)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: '#fff', fontWeight: 600, fontSize: 16, flexShrink: 0
-                      }}>
-                        {inicial}
-                      </div>
-                    )}
-                    
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: '#1a1a1a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                        {c.nome}
-                      </h3>
-                      <p style={{ fontSize: '13px', color: '#666', margin: '2px 0 0 0', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                        {c.cargo}
-                      </p>
+                  {/* Banner/Header escuro superior do card original */}
+                  <div className="card-header-banner" style={{
+                    height: '60px',
+                    background: 'linear-gradient(135deg, #1f1a3a, #0d0a1a)',
+                    margin: '-1.25rem -1.25rem 2.5rem -1.25rem',
+                    position: 'relative',
+                    borderTopLeftRadius: 'inherit',
+                    borderTopRightRadius: 'inherit'
+                  }}>
+                    {/* Avatar centralizado que corta a borda do banner */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-28px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      zIndex: 2
+                    }}>
+                      {c.foto_url ? (
+                        <img 
+                          src={c.foto_url} 
+                          alt={c.nome} 
+                          style={{ 
+                            width: '56px', 
+                            height: '56px', 
+                            borderRadius: '50%', 
+                            objectFit: 'cover', 
+                            border: '3px solid #fff',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '56px', height: '56px', borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #C80064, #8C1478)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: '#fff', fontWeight: 600, fontSize: 20,
+                          border: '3px solid #fff',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                        }}>
+                          {inicial}
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Notas e Estatísticas */}
+                  {/* Informações textuais centralizadas abaixo da foto */}
+                  <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px 0', color: '#1a1a1a' }}>
+                      {c.nome}
+                    </h3>
+                    <p style={{ fontSize: '13px', color: '#666', margin: 0 }}>
+                      {c.cargo}
+                    </p>
+                  </div>
+
+                  {/* Notas e Estatísticas originais */}
                   <div style={{ display: 'flex', gap: 16, background: '#F8F9FA', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
                     <div>
                       <div style={{ fontSize: 10, color: '#999', fontWeight: 600, textTransform: 'uppercase' }}>Média</div>
@@ -137,13 +154,13 @@ export default function Colaboradores() {
                     <div style={{
                       fontSize: 11, color: '#999', fontStyle: 'italic',
                       marginBottom: 10, borderLeft: '3px solid #C80064', paddingLeft: 8,
-                      lineHeight: 1.5
+                      lineHeight: 1.5, textAlign: 'left'
                     }}>
                       "{c.mensagem}"
                     </div>
                   )}
 
-                  {/* Ações */}
+                  {/* Ações originais */}
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 'auto' }}>
                     <button className="btn btn-sm btn-outline-pink" onClick={() => copyLink(c.slug)}>
                       <i className="ti ti-copy" style={{ fontSize: 12 }} /> Copiar link
