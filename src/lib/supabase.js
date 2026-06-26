@@ -27,10 +27,11 @@ export async function getColaboradorBySlug(slug) {
   return data
 }
 
-export async function criarColaborador({ nome, cargo, slug, mensagem }) {
+// ATUALIZADO: Agora inclui foto_url no insert
+export async function criarColaborador({ nome, cargo, slug, mensagem, foto_url }) {
   const { data, error } = await supabase
     .from('colaboradores')
-    .insert({ nome, cargo, slug, mensagem })
+    .insert({ nome, cargo, slug, mensagem, foto_url })
     .select()
     .single()
   if (error) throw error
@@ -54,6 +55,27 @@ export async function deletarColaborador(id) {
     .update({ ativo: false })
     .eq('id', id)
   if (error) throw error
+}
+
+// NOVA FUNÇÃO: Faz o upload do arquivo vindo do PC para o Storage
+export async function uploadFoto(file) {
+  const fileExt = file.name.split('.').pop()
+  // Gera um nome único para evitar que fotos com o mesmo nome se sobrescrevam
+  const fileName = `${Math.random()}_${Date.now()}.${fileExt}`
+  const filePath = `${fileName}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('colaboradores')
+    .upload(filePath, file)
+
+  if (uploadError) throw uploadError
+
+  // Retorna a URL pública que salvamos no banco de dados
+  const { data } = supabase.storage
+    .from('colaboradores')
+    .getPublicUrl(filePath)
+
+  return data.publicUrl
 }
 
 // ─── Feedbacks ───────────────────────────────────────────────

@@ -45,7 +45,7 @@ export default function Colaboradores() {
   }
 
   function copyLink(slug) {
-    navigator.clipboard.writeText(`${window.location.origin}/avaliacao/${slug}`).catch(() => {})
+    navigator.clipboard.writeText(`https://formulario-3f9.pages.dev//avaliacao/${slug}`).catch(() => {})
     toast(`Link copiado: /avaliacao/${slug}`)
   }
 
