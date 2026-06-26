@@ -28,10 +28,10 @@ export default function Colaboradores() {
     try {
       if (modal?.id) {
         await editarColaborador(modal.id, form)
-        toast('Colaborador updated!')
+        toast('Colaborador atualizado!')
       } else {
         await criarColaborador(form)
-        toast('Colaborador created!')
+        toast('Colaborador cadastrado!')
       }
       setModal(null); load()
     } catch (e) { toast(e.message || 'Erro ao salvar', 'error') }
@@ -42,7 +42,7 @@ export default function Colaboradores() {
     if (!confirm(`Deseja mesmo remover ${c.nome}?`)) return
     try {
       await deletarColaborador(c.id)
-      toast('Colaborador removed')
+      toast('Colaborador removido')
       load()
     } catch (e) { toast(e.message, 'error') }
   }
@@ -73,65 +73,40 @@ export default function Colaboradores() {
               const inicial = c.nome ? c.nome.charAt(0).toUpperCase() : '?'
 
               return (
-                <div key={c.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div key={c.id} className="card animate-fade-in">
                   
-                  {/* Banner/Header escuro superior do card original */}
-                  <div className="card-header-banner" style={{
-                    height: '60px',
-                    background: 'linear-gradient(135deg, #1f1a3a, #0d0a1a)',
-                    margin: '-1.25rem -1.25rem 2.5rem -1.25rem',
-                    position: 'relative',
-                    borderTopLeftRadius: 'inherit',
-                    borderTopRightRadius: 'inherit'
-                  }}>
-                    {/* Avatar centralizado que corta a borda do banner */}
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '-28px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      zIndex: 2
-                    }}>
-                      {c.foto_url ? (
-                        <img 
-                          src={c.foto_url} 
-                          alt={c.nome} 
-                          style={{ 
-                            width: '56px', 
-                            height: '56px', 
-                            borderRadius: '50%', 
-                            objectFit: 'cover', 
-                            border: '3px solid #fff',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-                          }}
-                        />
-                      ) : (
-                        <div style={{
-                          width: '56px', height: '56px', borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #C80064, #8C1478)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: '#fff', fontWeight: 600, fontSize: 20,
-                          border: '3px solid #fff',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-                        }}>
-                          {inicial}
-                        </div>
-                      )}
-                    </div>
+                  {/* Círculo do avatar centralizado mantendo o exato comportamento visual da inicial */}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                    {c.foto_url ? (
+                      <img 
+                        src={c.foto_url} 
+                        alt={c.nome} 
+                        style={{ 
+                          width: '56px', 
+                          height: '56px', 
+                          borderRadius: '50%', 
+                          objectFit: 'cover',
+                          border: '2px solid rgba(0,0,0,0.05)'
+                        }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: '56px', height: '56px', borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #C80064, #8C1478)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontWeight: 600, fontSize: 20
+                      }}>
+                        {inicial}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Informações textuais centralizadas abaixo da foto */}
-                  <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                    <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px 0', color: '#1a1a1a' }}>
-                      {c.nome}
-                    </h3>
-                    <p style={{ fontSize: '13px', color: '#666', margin: 0 }}>
-                      {c.cargo}
-                    </p>
-                  </div>
+                  {/* Nome e Cargo originais */}
+                  <h3>{c.nome}</h3>
+                  <p>{c.cargo}</p>
 
                   {/* Notas e Estatísticas originais */}
-                  <div style={{ display: 'flex', gap: 16, background: '#F8F9FA', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
+                  <div style={{ display: 'flex', gap: 16, background: '#F8F9FA', borderRadius: 8, padding: '8px 12px', marginBottom: 12, marginTop: 12 }}>
                     <div>
                       <div style={{ fontSize: 10, color: '#999', fontWeight: 600, textTransform: 'uppercase' }}>Média</div>
                       <div style={{ fontSize: 16, fontWeight: 700, color: '#C80064', display: 'flex', alignItems: 'center', gap: 3 }}>
@@ -154,7 +129,7 @@ export default function Colaboradores() {
                     <div style={{
                       fontSize: 11, color: '#999', fontStyle: 'italic',
                       marginBottom: 10, borderLeft: '3px solid #C80064', paddingLeft: 8,
-                      lineHeight: 1.5, textAlign: 'left'
+                      lineHeight: 1.5
                     }}>
                       "{c.mensagem}"
                     </div>
