@@ -70,36 +70,44 @@ export default function Colaboradores() {
         : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {colabs.map(c => {
               const s = stats[c.id] || { media: 0, total: 0 }
-              // Pega a primeira letra do nome caso não tenha foto
               const inicial = c.nome ? c.nome.charAt(0).toUpperCase() : '?'
 
               return (
-                <div key={c.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div key={c.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column', padding: '1.25rem' }}>
                   
-                  {/* Cabeçalho do Card com Foto Real ou Inicial */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  {/* FORÇADO: Container estrutural flex para alinhar a foto ao lado do texto */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px', width: '100%' }}>
+                    
                     {c.foto_url ? (
                       <img 
                         src={c.foto_url} 
                         alt={c.nome} 
-                        style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '2px solid #C80064' }}
+                        style={{ 
+                          width: '46px', 
+                          height: '46px', 
+                          borderRadius: '50%', 
+                          objectFit: 'cover', 
+                          border: '2px solid #C80064',
+                          display: 'block',
+                          flexShrink: 0
+                        }}
                       />
                     ) : (
                       <div style={{
-                        width: 44, height: 44, borderRadius: '50%',
+                        width: '46px', height: '46px', borderRadius: '50%',
                         background: 'linear-gradient(135deg, #C80064, #8C1478)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: '#fff', fontWeight: 600, fontSize: 16
+                        color: '#fff', fontWeight: 600, fontSize: 16, flexShrink: 0
                       }}>
                         {inicial}
                       </div>
                     )}
                     
-                    <div style={{ overflow: 'hidden' }}>
-                      <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0, color: '#1a1a1a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: '#1a1a1a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                         {c.nome}
                       </h3>
-                      <p style={{ fontSize: 12, color: '#666', margin: 0, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                      <p style={{ fontSize: '13px', color: '#666', margin: '2px 0 0 0', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                         {c.cargo}
                       </p>
                     </div>
@@ -155,7 +163,8 @@ export default function Colaboradores() {
 
       {modal && (
         <ColaboradorModal
-          initial={modal === 'new' ? null : modal}\n          onSave={handleSave}
+          initial={modal === 'new' ? null : modal}
+          onSave={handleSave}
           onClose={() => setModal(null)}
           loading={saving}
         />
