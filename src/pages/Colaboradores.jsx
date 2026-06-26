@@ -34,111 +34,95 @@ export default function Colaboradores() {
         toast('Colaborador cadastrado!')
       }
       setModal(null); load()
-    } catch (e) { toast(e.message || 'Erro ao salvar. Verifique se o link já existe.', 'error') }
+    } catch (e) { toast(e.message || 'Erro ao salvar', 'error') }
     finally { setSaving(false) }
   }
 
   async function handleDelete(c) {
-    if (!confirm(`Remover ${c.nome}? Os feedbacks serão mantidos.`)) return
-    try { await deletarColaborador(c.id); toast('Removido.'); load() }
-    catch (e) { toast(e.message, 'error') }
+    if (!confirm(`Deseja mesmo remover ${c.nome}?`)) return
+    try {
+      await deletarColaborador(c.id)
+      toast('Colaborador removido')
+      load()
+    } catch (e) { toast(e.message, 'error') }
   }
 
   function copyLink(slug) {
-  // Pega o domínio atual do site e junta com a rota certa
-  const linkCompleto = `${window.location.origin}avaliacao/${slug}`
-  
-  // Copia o link inteiro (Ex: https://formulario-3f9.pages.dev/avaliacao/aline)
-  navigator.clipboard.writeText(linkCompleto)
-  toast('Link copiado para a área de transferência!')
-}
-
-  const initials = n => n.split(' ').slice(0, 2).map(x => x[0]).join('').toUpperCase()
-
-  const notaColor = m => m >= 4.5 ? '#1D9E75' : m >= 3.5 ? '#3C8CC8' : m >= 2.5 ? '#BA7517' : '#C80064'
+    const linkCompleto = `${window.location.origin}/avaliacao/${slug}`
+    navigator.clipboard.writeText(linkCompleto)
+    toast('Link copiado para a área de transferência!')
+  }
 
   return (
-    <div>
-      {/* Header */}
-      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 14, flexShrink: 0,
-            background: 'linear-gradient(135deg, #C80064, #8C1478, #3C8CC8)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff',
-          }}>
-            <i className="ti ti-users" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: 21, fontWeight: 700, color: '#1a1a2e' }}>Colaboradores</h1>
-            <p style={{ color: '#999', fontSize: 13, marginTop: 2 }}>Gerencie os colaboradores e seus links de avaliação</p>
-          </div>
+    <div className="container">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div>
+          <h1 className="page-title">Colaboradores</h1>
+          <p className="page-subtitle">Gerencie os links e veja o resumo de cada integrante</p>
         </div>
         <button className="btn btn-primary" onClick={() => setModal('new')}>
           <i className="ti ti-plus" /> Novo colaborador
         </button>
       </div>
 
-      {loading
-        ? <div className="page-loading"><span className="spin spin-dark" /> Carregando...</div>
-        : colabs.length === 0
-          ? <div className="empty card" style={{ padding: '3rem' }}>
-            <i className="ti ti-users" style={{ fontSize: 44 }} />
-            <div style={{ fontWeight: 600, marginTop: 8, color: '#666' }}>Nenhum colaborador cadastrado</div>
-            <div style={{ fontSize: 13, color: '#bbb', marginTop: 4 }}>Clique em "Novo colaborador" para começar</div>
-          </div>
-          : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(275px, 1fr))', gap: '1rem' }}>
+      {loading 
+        ? <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}><span className="spin" /></div>
+        : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {colabs.map(c => {
               const s = stats[c.id] || { media: 0, total: 0 }
+              // Pega a primeira letra do nome caso não tenha foto
+              const inicial = c.nome ? c.nome.charAt(0).toUpperCase() : '?'
+
               return (
-                <div key={c.id} className="card" style={{
-                  display: 'flex', flexDirection: 'column',
-                  borderTop: '3px solid transparent',
-                  borderImage: 'linear-gradient(90deg, #C80064, #3C8CC8) 1',
-                }}>
-                  {/* Avatar + info */}
+                <div key={c.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
+                  
+                  {/* Cabeçalho do Card com Foto Real ou Inicial */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                    <div style={{
-                      width: 48, height: 48, borderRadius: '50%', flexShrink: 0,
-                      background: 'linear-gradient(135deg, #C80064, #8C1478, #3C8CC8)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 16, fontWeight: 700, color: '#fff',
-                      boxShadow: '0 2px 10px rgba(200,0,100,0.2)'
-                    }}>
-                      {initials(c.nome)}
-                    </div>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: '#1a1a2e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.nome}</div>
-                      <div style={{ fontSize: 12, color: '#888' }}>{c.cargo}</div>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
-                    <div style={{
-                      flex: 1, background: '#F5F6FA', borderRadius: 8, padding: '8px 10px', textAlign: 'center'
-                    }}>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: s.media > 0 ? notaColor(s.media) : '#ccc' }}>
-                        {s.media > 0 ? s.media.toFixed(1) : '—'}
+                    {c.foto_url ? (
+                      <img 
+                        src={c.foto_url} 
+                        alt={c.nome} 
+                        style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '2px solid #C80064' }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: 44, height: 44, borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #C80064, #8C1478)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontWeight: 600, fontSize: 16
+                      }}>
+                        {inicial}
                       </div>
-                      <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', fontWeight: 600 }}>Média</div>
-                    </div>
-                    <div style={{
-                      flex: 1, background: '#F5F6FA', borderRadius: 8, padding: '8px 10px', textAlign: 'center'
-                    }}>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: '#3C8CC8' }}>{s.total}</div>
-                      <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', fontWeight: 600 }}>Feedbacks</div>
+                    )}
+                    
+                    <div style={{ overflow: 'hidden' }}>
+                      <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0, color: '#1a1a1a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                        {c.nome}
+                      </h3>
+                      <p style={{ fontSize: 12, color: '#666', margin: 0, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                        {c.cargo}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Link */}
-                  <div style={{
-                    background: 'linear-gradient(90deg, #FCE8F2, #E6F2FB)',
-                    borderRadius: 7, padding: '6px 11px',
-                    fontSize: 11, color: '#666', wordBreak: 'break-all',
-                    marginBottom: 10, border: '1px solid rgba(200,0,100,0.1)'
-                  }}>
-                    🔗 /avaliacao/<strong style={{ color: '#C80064' }}>{c.slug}</strong>
+                  {/* Notas e Estatísticas */}
+                  <div style={{ display: 'flex', gap: 16, background: '#F8F9FA', borderRadius: 8, padding: '8px 12px', marginBottom: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: '#999', fontWeight: 600, textTransform: 'uppercase' }}>Média</div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: '#C80064', display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <i className="ti ti-star-filled" style={{ fontSize: 13 }} /> {s.media || '0.0'}
+                      </div>
+                    </div>
+                    <div style={{ width: 1, background: 'rgba(0,0,0,0.08)' }} />
+                    <div>
+                      <div style={{ fontSize: 10, color: '#999', fontWeight: 600, textTransform: 'uppercase' }}>Avaliações</div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: '#333' }}>{s.total || 0}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ fontSize: 11, color: '#777', marginBottom: 10 }}>
+                    <i className="ti ti-link" style={{ marginRight: 4 }} />
+                    /avaliacao/<strong>{c.slug}</strong>
                   </div>
 
                   {c.mensagem && (
@@ -171,8 +155,7 @@ export default function Colaboradores() {
 
       {modal && (
         <ColaboradorModal
-          initial={modal === 'new' ? null : modal}
-          onSave={handleSave}
+          initial={modal === 'new' ? null : modal}\n          onSave={handleSave}
           onClose={() => setModal(null)}
           loading={saving}
         />
