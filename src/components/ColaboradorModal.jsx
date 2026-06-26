@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { uploadFoto } from '../lib/supabase' // Importando a nova função de upload
+import { uploadFoto } from '../lib/supabase'
 
 function slugify(s) {
   return s.toLowerCase()
@@ -8,11 +8,10 @@ function slugify(s) {
 }
 
 export default function ColaboradorModal({ initial, onSave, onClose, loading }) {
-  // ATUALIZADO: Inclui foto_url no estado do formulário
   const [form, setForm] = useState({ nome: '', cargo: '', slug: '', mensagem: '', foto_url: '' })
   const [slugTouched, setSlugTouched] = useState(false)
   
-  // Novos estados para gerenciar o upload local do PC
+  // Estados para gerenciar o upload local do computador
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -44,7 +43,6 @@ export default function ColaboradorModal({ initial, onSave, onClose, loading }) 
     })
   }
 
-  // Função para capturar o arquivo do computador e criar um preview em tempo real
   function handleFileChange(e) {
     const selectedFile = e.target.files[0]
     if (selectedFile) {
@@ -66,7 +64,6 @@ export default function ColaboradorModal({ initial, onSave, onClose, loading }) 
         finalFotoUrl = await uploadFoto(file)
       }
 
-      // Envia os dados completos com a URL final gerada pelo Storage do Supabase
       onSave({ ...form, foto_url: finalFotoUrl })
     } catch (err) {
       alert('Erro ao fazer upload da foto: ' + err.message)
@@ -98,7 +95,7 @@ export default function ColaboradorModal({ initial, onSave, onClose, loading }) 
             </div>
           </div>
 
-          {/* NOVO CAMPO: Seleção de foto do PC com Pré-visualização */}
+          {/* Campo para escolher foto do computador */}
           <div className="form-group">
             <label className="label">Foto do Colaborador (Direto do PC)</label>
             
