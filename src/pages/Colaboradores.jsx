@@ -46,7 +46,7 @@ export default function Colaboradores() {
 
   function copyLink(slug) {
   // Pega o domínio atual do site e junta com a rota certa
-  const linkCompleto = `${window.location.origin}/avaliacao/${slug}`
+  const linkCompleto = `${window.location.origin}avaliacao/${slug}`
   
   // Copia o link inteiro (Ex: https://formulario-3f9.pages.dev/avaliacao/aline)
   navigator.clipboard.writeText(linkCompleto)
