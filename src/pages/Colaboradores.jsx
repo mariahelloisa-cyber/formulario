@@ -45,9 +45,13 @@ export default function Colaboradores() {
   }
 
   function copyLink(slug) {
-    navigator.clipboard.writeText(`https://formulario-3f9.pages.dev//avaliacao/${slug}`).catch(() => {})
-    toast(`Link copiado: /avaliacao/${slug}`)
-  }
+  // Pega o domínio atual do site e junta com a rota certa
+  const linkCompleto = `${window.location.origin}/avaliacao/${slug}`
+  
+  // Copia o link inteiro (Ex: https://formulario-3f9.pages.dev/avaliacao/aline)
+  navigator.clipboard.writeText(linkCompleto)
+  toast('Link copiado para a área de transferência!')
+}
 
   const initials = n => n.split(' ').slice(0, 2).map(x => x[0]).join('').toUpperCase()
 
